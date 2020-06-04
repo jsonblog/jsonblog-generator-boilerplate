@@ -1,0 +1,30 @@
+body {
+  font-family: "Inconsolata", monospace;
+  padding: 40px 0;
+}
+
+.title {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+.byline {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.pages {
+  display: flex;
+  width: 400px;
+  justify-content: space-between;
+  margin: auto;
+}
+
+.content {
+  width: 600px;
+  margin: auto;
+}
+.content ul {
+  list-style: none;
+}

@@ -91,7 +91,7 @@ const generator = async blog => {
 
   // Copy assets into memory
   console.log("aaaaa");
-  const assets = await rreaddir("assets");
+  const assets = await rreaddir(__dirname + "/assets");
   console.log(assets);
   // for (const page of pagesWithContent) {
   //   files.push({

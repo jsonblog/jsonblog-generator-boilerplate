@@ -1,6 +1,6 @@
 {
   "name": "jsonblog-generator-boilerplate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "fs-promise": "^2.0.3",
     "handlebars": "^4.7.6",
     "marked": "^1.1.0",
     "slugify": "^1.4.0"

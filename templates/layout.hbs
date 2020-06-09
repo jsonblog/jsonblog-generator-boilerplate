@@ -17,22 +17,24 @@
   <!-- Place favicon.ico in the root directory -->
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#fafafa">
-  <link rel="stylesheet" href="main.css" />
+  <link rel="stylesheet" href="/main.css" />
 </head>
 
 <body>
-  <div class="title">{{site.title}}</div>
-  <div class="byline">{{site.description}}</div>
-  <div class="pages">
-    <a href="">Home</a>
-    <a href="">About</a>
-    <a href="">Dogshit</a>
-    <a href="">Signup</a>
-  </div>
+  <div class="container">
+    <div class="title">{{site.title}}</div>
+    <div class="byline">{{site.description}}</div>
+    <div class="pages">
+      <a href="/">Home</a>
+      {{#each pages}}
+        <a href="/{{slug}}">{{title}}</a>
+      {{/each}}
+    </div>
 
-  <div class="content">
-  {{{page}}}
-</div>
+    <div class="content">
+      {{{page}}}
+    </div>
+  </div>
 </body>
 
 </html>

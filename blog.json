@@ -1,0 +1,33 @@
+{
+  "site": {
+    "title": "My Blog",
+    "description": "hopefully someone likes this"
+  },
+  "basics": {
+    "name": "Thomas aDavis"
+  },
+  "posts": [
+    {
+      "title": "Jean favaorite theme",
+      "source": "https://gist.githubusercontent.com/thomasdavis/3654cb08bf728f23a96bf70a037e5817/raw/dd38c0fb1094159789cc980e20f0544b664ed3c1/nobody.md"
+    },
+    {
+      "title": "Organizing your application using Modules (require.js)",
+      "source": "https://raw.githubusercontent.com/thomasdavis/backbonetutorials/gh-pages/_posts/2011-10-10-organizing-backbone-using-modules.md"
+    },
+    {
+      "title": "Markdown Example",
+      "source": "https://gist.githubusercontent.com/thomasdavis/03b712d36272c9e79535c583bf8e70b8/raw/1aa2f00e62ac85d1f51d0792facb1af8db4b6ef3/second.md"
+    }
+  ],
+  "pages": [
+    {
+      "title": "About",
+      "source": "https://gist.githubusercontent.com/thomasdavis/7451150385ee571e4ef87ffcefabc583/raw/3e7eed3648f3a3e3d7b9a84d99fa1da762c5b880/about.md"
+    },
+    {
+      "title": "Contact",
+      "source": "https://gist.githubusercontent.com/thomasdavis/7de3d31b99f7355b42c645192bfb15ea/raw/563260399bf8f94af29701cb781ecac314f901a5/deadly.md"
+    }
+  ]
+}

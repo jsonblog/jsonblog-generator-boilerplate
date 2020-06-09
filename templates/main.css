@@ -2,29 +2,53 @@ body {
   font-family: "Inconsolata", monospace;
   padding: 40px 0;
 }
-
+body a {
+  color: #444;
+  font-weight: 600;
+}
+body a:hover {
+  color: #777777 !important;
+}
+.container {
+  width: 800px;
+  margin: auto;
+}
 .title {
-  text-align: center;
   font-size: 36px;
   margin-bottom: 20px;
 }
 .byline {
-  text-align: center;
   font-size: 26px;
   margin-bottom: 20px;
 }
 
-.pages {
-  display: flex;
-  width: 400px;
-  justify-content: space-between;
-  margin: auto;
+.pages a {
+  margin-right: 20px;
+  color: #444;
+  font-weight: 600;
 }
 
 .content {
-  width: 600px;
-  margin: auto;
+  margin-top: 40px;
 }
 .content ul {
+}
+
+.postsList {
   list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.postListItem {
+  text-decoration: none;
+  margin-bottom: 5px;
+  font-weight: 200;
+}
+.postListItem a:visited,
+.postListItem a:focus,
+.postListItem a:active,
+.postListItem a {
+  text-decoration: none;
+  color: #444;
+  font-weight: 600;
 }

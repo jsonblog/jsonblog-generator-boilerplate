@@ -4,6 +4,7 @@ const path = require("path");
 const slugify = require("slugify");
 const Handlebars = require("handlebars");
 const marked = require("marked");
+const { readdir, stat } = require("fs-promise");
 
 const INDEX_TEMPLATE = fs.readFileSync(
   path.join(__dirname, "./templates/index.hbs"),
@@ -11,6 +12,10 @@ const INDEX_TEMPLATE = fs.readFileSync(
 );
 const POST_TEMPLATE = fs.readFileSync(
   path.join(__dirname, "./templates/post.hbs"),
+  "utf8"
+);
+const PAGE_TEMPLATE = fs.readFileSync(
+  path.join(__dirname, "./templates/page.hbs"),
   "utf8"
 );
 const LAYOUT_TEMPLATE = fs.readFileSync(
@@ -23,10 +28,19 @@ const MAIN_CSS = fs.readFileSync(
   "utf8"
 );
 
+async function rreaddir(dir, allFiles = []) {
+  const files = (await readdir(dir)).map(f => path.join(dir, f));
+  allFiles.push(...files);
+  await Promise.all(
+    files.map(async f => (await stat(f)).isDirectory() && rreaddir(f, allFiles))
+  );
+  return allFiles;
+}
+
 const generator = async blog => {
   const postsWithContent = [];
   for (const post of blog.posts) {
-    let content = null;
+    let content = "asd";
     try {
       content = (await axios.get(post.source)).data;
     } catch (e) {
@@ -36,6 +50,21 @@ const generator = async blog => {
       post.content = marked(content);
       post.slug = slugify(post.title);
       postsWithContent.push(post);
+    }
+  }
+
+  const pagesWithContent = [];
+  for (const page of blog.pages) {
+    let content = "asd";
+    try {
+      content = (await axios.get(page.source)).data;
+    } catch (e) {
+      console.log(e);
+    }
+    if (content) {
+      page.content = marked(content);
+      page.slug = slugify(page.title);
+      pagesWithContent.push(page);
     }
   }
 
@@ -50,26 +79,56 @@ const generator = async blog => {
     name: "index.html",
     content: layoutTemplate({
       site: blog.site,
+      pages: pagesWithContent,
       page: indexTemplate({ posts: postsWithContent })
     })
   });
+
   files.push({
     name: "main.css",
     content: MAIN_CSS
   });
-  // Generate post files
 
-  const postTemplate = Handlebars.compile(POST_TEMPLATE);
+  // Copy assets into memory
+  console.log("aaaaa");
+  const assets = await rreaddir("assets");
+  console.log(assets);
+  // for (const page of pagesWithContent) {
+  //   files.push({
+  //     name: `${page.slug}.html`,
+  //     content: layoutTemplate({
+  //       site: blog.site,
+  //       pages: blog.pages,
+  //       page: pageTemplate({ page })
+  //     })
+  //   });
+  // }
 
-  for (const post of postsWithContent) {
+  // Generate page files
+  const pageTemplate = Handlebars.compile(PAGE_TEMPLATE);
+
+  for (const page of pagesWithContent) {
     files.push({
-      name: `${post.slug}.html`,
+      name: `${page.slug}/index.html`,
       content: layoutTemplate({
         site: blog.site,
+        pages: blog.pages,
+        page: pageTemplate({ page })
+      })
+    });
+  }
+
+  // Generate post files
+  const postTemplate = Handlebars.compile(POST_TEMPLATE);
+  for (const post of postsWithContent) {
+    files.push({
+      name: `post/${post.slug}/index.html`,
+      content: layoutTemplate({
+        site: blog.site,
+        pages: blog.pages,
         page: postTemplate({ post: post })
       })
     });
-    postTemplate;
   }
 
   return files;

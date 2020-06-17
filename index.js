@@ -5,6 +5,28 @@ const slugify = require("slugify");
 const Handlebars = require("handlebars");
 const marked = require("marked");
 const { readdir, stat } = require("fs-promise");
+var hljs = require("highlight.js");
+
+var md = require("markdown-it")({
+  html: true, // Enable HTML tags in source
+  breaks: false, // Convert '\n' in paragraphs into <br>
+  linkify: true, // Autoconvert URL-like text to links
+  highlight: function(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre class="hljs"><code>' +
+          hljs.highlight(lang, str, true).value +
+          "</code></pre>"
+        );
+      } catch (__) {}
+    }
+
+    return (
+      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
+    );
+  }
+});
 
 const INDEX_TEMPLATE = fs.readFileSync(
   path.join(__dirname, "./templates/index.hbs"),
@@ -37,17 +59,34 @@ async function rreaddir(dir, allFiles = []) {
   return allFiles;
 }
 
+async function fetchFile(uri) {
+  let content;
+  try {
+    if (uri.indexOf("http") !== -1) {
+      // remote file
+      content = (await axios.get(`${uri}?cb=${new Date().getTime()}`)).data;
+    } else {
+      // local file
+      content = fs.readFileSync(uri, "utf8");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return content;
+}
+
 const generator = async blog => {
   const postsWithContent = [];
   for (const post of blog.posts) {
-    let content = "asd";
+    let content = "";
     try {
-      content = (await axios.get(post.source)).data;
+      content = await fetchFile(post.source);
+      console.log(content);
     } catch (e) {
       console.log(e);
     }
     if (content) {
-      post.content = marked(content);
+      post.content = md.render(content);
       post.slug = slugify(post.title);
       postsWithContent.push(post);
     }
@@ -57,7 +96,7 @@ const generator = async blog => {
   for (const page of blog.pages) {
     let content = "asd";
     try {
-      content = (await axios.get(page.source)).data;
+      content = await fetchFile(page.source);
     } catch (e) {
       console.log(e);
     }

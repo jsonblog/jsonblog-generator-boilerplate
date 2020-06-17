@@ -1,6 +1,10 @@
-body {
+body,
+html {
   font-family: "Inconsolata", monospace;
-  padding: 40px 0;
+}
+
+body {
+  padding: 20px;
 }
 body a {
   color: #444;
@@ -8,10 +12,56 @@ body a {
 }
 body a:hover {
   color: #777777 !important;
+  text-decoration: none;
+}
+p > code {
+  background: #ededed;
+  padding: 3px 2px;
+  color: #2aa198;
+}
+blockquote {
+  color: #555;
+}
+blockquote {
+  margin: 30px auto;
+  font-style: italic;
+  color: #555555;
+  padding: 0.8em 30px 0.4em 45px;
+  border-left: 8px solid #2aa198;
+  line-height: 1.6;
+  position: relative;
+  background: #ededed;
+}
+
+blockquote::before {
+  font-family: Arial;
+  content: "\201C";
+  color: #2aa198;
+  font-size: 3em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
+}
+
+blockquote::after {
+  content: "";
+}
+
+blockquote span {
+  display: block;
+  color: #333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 1em;
 }
 .container {
-  width: 800px;
+  width: 680px;
   margin: auto;
+}
+@media only screen and (max-width: 680px) {
+  .container {
+    width: 100%;
+  }
 }
 .title {
   font-size: 36px;

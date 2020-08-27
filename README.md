@@ -6,29 +6,28 @@ In short, a `generator` is a function that takes a parsed `blog.json` and return
 
 The output should be saved to the file system.
 
-```
+```js
 const generator = (blogObject) => {
   const siteName = blogObject.site.name;
-  const templateHTML = '<h1>{siteName}</h1>';
-  const fileContent = templateHTML.replace('{siteName}', siteName);
+  const templateHTML = "<h1>{siteName}</h1>";
+  const fileContent = templateHTML.replace("{siteName}", siteName);
   const files = [];
   files.push({
     content: fileContent,
-    path: 'index.html'
+    path: "index.html",
   });
   files.forEach((file) => {
-      fs.writeFileSync(file.path, file.content)
-  })
-}
+    fs.writeFileSync(file.path, file.content);
+  });
+};
 
-generator({name: 'Ajax'});
+generator({ name: "Ajax" });
 // index.html
-<h1>Ajax</h1>
-
+//<h1>Ajax</h1>
 ```
 
-You can write that shit in any language.
+JSONBlog is code agnostic so feel free to attempt making a generator in another language.
 
-Theoretically, a generator can generate the code required for any blog framework.
+Theoretically, a generator can generate the code required for any blog framework too.
 
 One blog to rule them all.

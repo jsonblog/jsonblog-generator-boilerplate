@@ -3,11 +3,24 @@
 
 <head>
   <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
+  {{#unless page}}
+    {{#unless post}}
+      <title>{{site.title}}</title>
+    {{/unless}}
+  {{/unless}}
+  {{#if page}}
+    <title>{{page.title}} - {{site.title}}</title>
+  {{/if}}
+  {{#if post}}
+    <title>{{post.title}} - {{site.title}}</title>
+  {{/if}}
+  <meta name="description" content="{{site.description}}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="" />
+  <meta property="og:title" content="{{site.title}}" />
+  {{#if page}}
+    <meta property="og:title" content="{{title}}" />
+  {{/if}}
   <meta property="og:type" content="" />
   <meta property="og:url" content="" />
   <meta property="og:image" content="" />
@@ -33,7 +46,7 @@
     </div>
 
     <div class="content">
-      {{{page}}}
+      {{{pageContent}}}
     </div>
     <br />
     Built by <a href="https://jsonblog.org">JSON Blog</a>

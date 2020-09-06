@@ -58,6 +58,9 @@ blockquote span {
   width: 680px;
   margin: auto;
 }
+.container img {
+  width: 100%;
+}
 @media only screen and (max-width: 680px) {
   .container {
     width: 100%;

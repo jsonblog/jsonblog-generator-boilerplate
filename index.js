@@ -11,7 +11,7 @@ var md = require("markdown-it")({
   html: true, // Enable HTML tags in source
   breaks: false, // Convert '\n' in paragraphs into <br>
   linkify: true, // Autoconvert URL-like text to links
-  highlight: function(str, lang) {
+  highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return (
@@ -25,7 +25,7 @@ var md = require("markdown-it")({
     return (
       '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
     );
-  }
+  },
 });
 
 const INDEX_TEMPLATE = fs.readFileSync(
@@ -51,10 +51,12 @@ const MAIN_CSS = fs.readFileSync(
 );
 
 async function rreaddir(dir, allFiles = []) {
-  const files = (await readdir(dir)).map(f => path.join(dir, f));
+  const files = (await readdir(dir)).map((f) => path.join(dir, f));
   allFiles.push(...files);
   await Promise.all(
-    files.map(async f => (await stat(f)).isDirectory() && rreaddir(f, allFiles))
+    files.map(
+      async (f) => (await stat(f)).isDirectory() && rreaddir(f, allFiles)
+    )
   );
   return allFiles;
 }
@@ -75,8 +77,10 @@ async function fetchFile(uri) {
   return content;
 }
 
-const generator = async blog => {
+const generator = async (blog) => {
+  const pageTemplate = Handlebars.compile(PAGE_TEMPLATE);
   const postsWithContent = [];
+
   for (const post of blog.posts) {
     let content = "";
     try {
@@ -119,41 +123,31 @@ const generator = async blog => {
     content: layoutTemplate({
       site: blog.site,
       pages: pagesWithContent,
-      page: indexTemplate({ posts: postsWithContent })
-    })
+      pageContent: indexTemplate({ posts: postsWithContent }),
+    }),
   });
 
   files.push({
     name: "main.css",
-    content: MAIN_CSS
+    content: MAIN_CSS,
   });
 
   // Copy assets into memory
   console.log("aaaaa");
   const assets = await rreaddir(__dirname + "/assets");
-  console.log(assets);
-  // for (const page of pagesWithContent) {
-  //   files.push({
-  //     name: `${page.slug}.html`,
-  //     content: layoutTemplate({
-  //       site: blog.site,
-  //       pages: blog.pages,
-  //       page: pageTemplate({ page })
-  //     })
-  //   });
-  // }
 
   // Generate page files
-  const pageTemplate = Handlebars.compile(PAGE_TEMPLATE);
 
   for (const page of pagesWithContent) {
+    console.log("page", page);
     files.push({
       name: `${page.slug}/index.html`,
       content: layoutTemplate({
         site: blog.site,
+        page: page,
         pages: blog.pages,
-        page: pageTemplate({ page })
-      })
+        pageContent: pageTemplate({ page }),
+      }),
     });
   }
 
@@ -165,8 +159,9 @@ const generator = async blog => {
       content: layoutTemplate({
         site: blog.site,
         pages: blog.pages,
-        page: postTemplate({ post: post })
-      })
+        post: post,
+        pageContent: postTemplate({ post: post }),
+      }),
     });
   }
 

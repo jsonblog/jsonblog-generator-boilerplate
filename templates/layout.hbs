@@ -17,16 +17,18 @@
   <meta name="description" content="{{site.description}}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="{{site.title}}" />
+  {{#unless page}}
+    {{#unless post}}
+      <meta property="og:title" content="{{site.title}}" />
+    {{/unless}}
+  {{/unless}}
   {{#if page}}
-    <meta property="og:title" content="{{title}}" />
+    <meta property="og:title" content="{{page.title}} - {{site.title}}" />
   {{/if}}
-  <meta property="og:type" content="" />
-  <meta property="og:url" content="" />
-  <meta property="og:image" content="" />
+  {{#if post}}
+    <meta property="og:title" content="{{post.title}} - {{site.title}}" />
+  {{/if}}
 
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
   <!-- Place favicon.ico in the root directory -->
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#fafafa">

@@ -14,7 +14,7 @@
     "handlebars": "^4.7.6",
     "highlight.js": "^10.1.0",
     "markdown-it": "^11.0.0",
-    "marked": "^1.1.0",
+    "marked": "^4.0.10",
     "slugify": "^1.4.0"
   }
 }

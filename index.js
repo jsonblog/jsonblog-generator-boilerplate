@@ -97,7 +97,7 @@ const generator = async (blog) => {
   }
 
   const pagesWithContent = [];
-  for (const page of blog.pages) {
+  for (const page of blog.pages || []) {
     let content = "asd";
     try {
       content = await fetchFile(page.source);

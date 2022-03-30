@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "fs-promise": "^2.0.3",
     "handlebars": "^4.7.6",
     "highlight.js": "^10.1.0",

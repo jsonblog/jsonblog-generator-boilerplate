@@ -13,7 +13,7 @@
     "fs-promise": "^2.0.3",
     "handlebars": "^4.7.6",
     "highlight.js": "^10.1.0",
-    "markdown-it": "^11.0.0",
+    "markdown-it": "^12.3.2",
     "marked": "^1.1.0",
     "slugify": "^1.4.0"
   }

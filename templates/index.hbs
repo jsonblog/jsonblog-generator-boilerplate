@@ -1,21 +1,12 @@
 {{#> layout}}
   {{#*inline "content"}}
-    <div class="container">
-      <section class="hero">
-        <h1>{{blog.site.title}}</h1>
-        <p class="subtitle">{{blog.site.description}}</p>
-      </section>
-
-      <section class="posts">
-        {{#each posts}}
-          <article class="post-card">
-            <h2><a href="/{{this.slug}}.html">{{this.title}}</a></h2>
-            {{#if this.publishedDate}}
-              <time datetime="{{this.publishedDate}}">{{formatDate this.publishedDate}}</time>
-            {{/if}}
-          </article>
-        {{/each}}
-      </section>
-    </div>
+    {{#each posts}}
+      <article class="post-card">
+        <h2><a href="{{this.slug}}.html">{{this.title}}</a></h2>
+        {{#if this.publishedDate}}
+          <time datetime="{{this.publishedDate}}">{{formatDate this.publishedDate}}</time>
+        {{/if}}
+      </article>
+    {{/each}}
   {{/inline}}
 {{/layout}}

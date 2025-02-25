@@ -40,8 +40,9 @@ const mainCss = fs.readFileSync(
   'utf8'
 );
 
-// Register layout partial
+// Register partials
 Handlebars.registerPartial('layout', templateFiles.layout);
+Handlebars.registerPartial('content', '{{> @partial-block }}');
 
 // Helper function to format dates
 Handlebars.registerHelper('formatDate', function (date: string) {
@@ -52,46 +53,30 @@ Handlebars.registerHelper('formatDate', function (date: string) {
   });
 });
 
-// Helper function for equality comparison
-Handlebars.registerHelper('eq', function (a: any, b: any) {
-  return a === b;
-});
-
-async function fetchFile(uri: string): Promise<string> {
-  try {
-    if (uri.startsWith('http')) {
-      // Add cache buster for remote files
-      const separator = uri.includes('?') ? '&' : '?';
-      const response = await axios.get(
-        `${uri}${separator}cb=${Date.now().toString()}`
-      );
-      return response.data;
-    }
-    // Local file
-    return fs.readFileSync(uri, 'utf8');
-  } catch (error) {
-    console.error(`Error fetching file ${uri}:`, error);
-    return '';
-  }
-}
-
+// Process posts or pages
 async function processContent<T extends BlogPost | BlogPage>(
   items: T[],
   type: 'post' | 'page'
 ): Promise<T[]> {
-  const processedItems: T[] = [];
+  if (!items) return [];
 
-  for (const item of items) {
-    const content = await fetchFile(item.source);
-    if (content) {
-      const processedItem = { ...item };
-      processedItem.content = md.render(content);
-      processedItem.slug = slugify(item.title, { lower: true });
-      processedItems.push(processedItem);
+  const processedItems = await Promise.all(
+    items.map(async (item) => {
+      const content = item.content;
+      return {
+        ...item,
+        content: md.render(content),
+        slug: item.slug || slugify(item.title, { lower: true }),
+      };
+    })
+  );
+
+  return processedItems.sort((a, b) => {
+    if (type === 'post' && 'publishedDate' in a && 'publishedDate' in b) {
+      return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
     }
-  }
-
-  return processedItems;
+    return 0;
+  });
 }
 
 const generator = async (blog: Blog): Promise<GeneratedFile[]> => {

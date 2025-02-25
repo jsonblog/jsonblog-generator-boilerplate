@@ -1,14 +1,12 @@
 export interface BlogPost {
     title: string;
-    source: string;
-    publishedDate?: string;
-    content?: string;
+    content: string;
+    publishedDate: string;
     slug?: string;
 }
 export interface BlogPage {
     title: string;
-    source: string;
-    content?: string;
+    content: string;
     slug?: string;
 }
 export interface BlogSite {

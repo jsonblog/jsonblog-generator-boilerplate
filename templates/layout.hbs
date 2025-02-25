@@ -1,58 +1,29 @@
 <!doctype html>
-<html class="no-js" lang="">
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  {{#unless page}}
-    {{#unless post}}
-      <title>{{site.title}}</title>
-    {{/unless}}
-  {{/unless}}
-  {{#if page}}
-    <title>{{page.title}} - {{site.title}}</title>
-  {{/if}}
-  {{#if post}}
-    <title>{{post.title}} - {{site.title}}</title>
-  {{/if}}
-  <meta name="description" content="{{site.description}}">
+  <title>{{#if post}}{{post.title}} - {{/if}}{{#if page}}{{page.title}} - {{/if}}{{blog.site.title}}</title>
+  <meta name="description" content="{{blog.site.description}}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {{#unless page}}
-    {{#unless post}}
-      <meta property="og:title" content="{{site.title}}" />
-    {{/unless}}
-  {{/unless}}
-  {{#if page}}
-    <meta property="og:title" content="{{page.title}} - {{site.title}}" />
-  {{/if}}
-  {{#if post}}
-    <meta property="og:title" content="{{post.title}} - {{site.title}}" />
-  {{/if}}
-
-  <!-- Place favicon.ico in the root directory -->
-  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-  <meta name="theme-color" content="#fafafa">
-  <link rel="stylesheet" href="/main.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/styles/solarized-dark.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
 </head>
-
 <body>
-  <div class="container">
-    <div class="title">{{site.title}}</div>
-    <div class="byline">{{site.description}}</div>
-    <div class="pages">
-      <a href="/">Home</a>
-      {{#each pages}}
-        <a href="/{{slug}}">{{title}}</a>
-      {{/each}}
-    </div>
-
-    <div class="content">
-      {{{pageContent}}}
-    </div>
-    <br />
-    Built by <a href="https://github.com/jsonblog/jsonblog-cli">JSON Blog</a>
+  <div class="title">{{blog.site.title}}</div>
+  <div class="byline">{{blog.site.description}}</div>
+  <div class="pages">
+    <a href="/">Home</a>
+    {{#each pages}}
+      <a href="{{slug}}.html">{{title}}</a>
+    {{/each}}
   </div>
-</body>
 
+  <div class="content">
+    {{> content}}
+  </div>
+
+  <footer>
+    Built with <a href="https://github.com/jsonblog/jsonblog-cli">JSON Blog</a>
+  </footer>
+</body>
 </html>

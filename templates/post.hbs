@@ -1,18 +1,8 @@
 {{#> layout}}
   {{#*inline "content"}}
-    <div class="container">
-      <article class="post">
-        <header class="post-header">
-          <h1>{{post.title}}</h1>
-          {{#if post.publishedDate}}
-            <time datetime="{{post.publishedDate}}">{{formatDate post.publishedDate}}</time>
-          {{/if}}
-        </header>
-
-        <div class="post-content">
-          {{{post.content}}}
-        </div>
-      </article>
-    </div>
+    <article>
+      <time datetime="{{post.publishedDate}}">{{formatDate post.publishedDate}}</time>
+      {{{post.content}}}
+    </article>
   {{/inline}}
 {{/layout}}

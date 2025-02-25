@@ -2,7 +2,6 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const axios_1 = __importDefault(require("axios"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const slugify_1 = __importDefault(require("slugify"));
@@ -35,8 +34,9 @@ const templateFiles = {
 };
 // Load CSS
 const mainCss = fs_1.default.readFileSync(path_1.default.join(__dirname, '../templates/main.css'), 'utf8');
-// Register layout partial
+// Register partials
 handlebars_1.default.registerPartial('layout', templateFiles.layout);
+handlebars_1.default.registerPartial('content', '{{> @partial-block }}');
 // Helper function to format dates
 handlebars_1.default.registerHelper('formatDate', function (date) {
     return new Date(date).toLocaleDateString('en-US', {
@@ -45,38 +45,24 @@ handlebars_1.default.registerHelper('formatDate', function (date) {
         day: 'numeric',
     });
 });
-// Helper function for equality comparison
-handlebars_1.default.registerHelper('eq', function (a, b) {
-    return a === b;
-});
-async function fetchFile(uri) {
-    try {
-        if (uri.startsWith('http')) {
-            // Add cache buster for remote files
-            const separator = uri.includes('?') ? '&' : '?';
-            const response = await axios_1.default.get(`${uri}${separator}cb=${Date.now().toString()}`);
-            return response.data;
-        }
-        // Local file
-        return fs_1.default.readFileSync(uri, 'utf8');
-    }
-    catch (error) {
-        console.error(`Error fetching file ${uri}:`, error);
-        return '';
-    }
-}
+// Process posts or pages
 async function processContent(items, type) {
-    const processedItems = [];
-    for (const item of items) {
-        const content = await fetchFile(item.source);
-        if (content) {
-            const processedItem = { ...item };
-            processedItem.content = md.render(content);
-            processedItem.slug = (0, slugify_1.default)(item.title, { lower: true });
-            processedItems.push(processedItem);
+    if (!items)
+        return [];
+    const processedItems = await Promise.all(items.map(async (item) => {
+        const content = item.content;
+        return {
+            ...item,
+            content: md.render(content),
+            slug: item.slug || (0, slugify_1.default)(item.title, { lower: true }),
+        };
+    }));
+    return processedItems.sort((a, b) => {
+        if (type === 'post' && 'publishedDate' in a && 'publishedDate' in b) {
+            return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
         }
-    }
-    return processedItems;
+        return 0;
+    });
 }
 const generator = async (blog) => {
     const files = [];

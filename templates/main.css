@@ -1,235 +1,180 @@
-:root {
-  --primary-color: #2563eb;
-  --text-color: #1f2937;
-  --bg-color: #ffffff;
-  --accent-bg: #f3f4f6;
-  --border-color: #e5e7eb;
-  --header-height: 4rem;
-}
-
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+/* Base */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  line-height: 1.6;
-  color: var(--text-color);
-  background: var(--bg-color);
-}
-
-/* Layout */
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-/* Header & Navigation */
-header {
-  background: var(--bg-color);
-  border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-nav {
-  max-width: 800px;
-  margin: 0 auto;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
+  max-width: 600px;
+  margin: 1.5rem auto;
   padding: 0 1rem;
-  height: var(--header-height);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: #000;
+  background: #fff;
+  font-size: 14px;
 }
 
-.nav-brand a {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-color);
-  text-decoration: none;
+/* Links */
+a {
+  color: #000;
+  text-decoration: underline;
 }
 
-.nav-links a {
-  color: var(--text-color);
-  text-decoration: none;
-  margin-left: 1.5rem;
-  font-weight: 500;
+a:hover {
+  background: #000;
+  color: #fff;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-  color: var(--primary-color);
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  margin: 1.5rem 0 0.75rem;
 }
 
-/* Hero Section */
-.hero {
-  text-align: center;
-  padding: 3rem 0;
+h1 { font-size: 1.3rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 1rem; }
+h4 { font-size: 1rem; }
+
+p, ul, ol {
+  margin-bottom: 0.75rem;
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+/* Header */
+.title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0.75rem 0 0.25rem;
 }
 
-.hero .subtitle {
-  font-size: 1.25rem;
-  color: #6b7280;
-}
-
-/* Posts */
-.posts {
-  display: grid;
-  gap: 2rem;
-}
-
-.post-card {
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  transition: transform 0.2s;
-}
-
-.post-card:hover {
-  transform: translateY(-2px);
-}
-
-.post-card h2 {
-  margin-bottom: 0.5rem;
-}
-
-.post-card h2 a {
-  color: var(--text-color);
-  text-decoration: none;
-}
-
-.post-card h2 a:hover {
-  color: var(--primary-color);
-}
-
-.post-card time {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-/* Post & Page Content */
-.post-header,
-.page-header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.post-header h1,
-.page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.post-header time {
-  color: #6b7280;
-}
-
-.post-content,
-.page-content {
-  font-size: 1.125rem;
-}
-
-.post-content h1,
-.post-content h2,
-.post-content h3,
-.post-content h4,
-.post-content h5,
-.post-content h6,
-.page-content h1,
-.page-content h2,
-.page-content h3,
-.page-content h4,
-.page-content h5,
-.page-content h6 {
-  margin: 2rem 0 1rem;
-}
-
-.post-content p,
-.page-content p {
+.byline {
   margin-bottom: 1.5rem;
 }
 
-.post-content a,
-.page-content a {
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.post-content a:hover,
-.page-content a:hover {
-  text-decoration: underline;
-}
-
-.post-content ul,
-.post-content ol,
-.page-content ul,
-.page-content ol {
+/* Navigation */
+.pages {
   margin: 1.5rem 0;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 0.4rem 0;
+}
+
+.pages a {
+  margin-right: 1rem;
+}
+
+/* Posts */
+.post-card {
+  margin-bottom: 1.5rem;
+}
+
+.post-card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.25rem;
+}
+
+.post-card time {
+  font-size: 0.9rem;
+}
+
+/* Code */
+pre {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+  background: #f5f5f5;
+  border: 1px solid #eee;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  background: #f5f5f5;
+  border: 1px solid #eee;
+}
+
+pre code {
+  padding: 0;
+  border: none;
+}
+
+/* Lists */
+ul, ol {
   padding-left: 1.5rem;
 }
 
-.post-content blockquote,
-.page-content blockquote {
-  border-left: 4px solid var(--primary-color);
-  margin: 1.5rem 0;
-  padding: 0.5rem 0 0.5rem 1rem;
-  color: #4b5563;
+li {
+  margin-bottom: 0.25rem;
 }
 
-/* Code Highlighting */
-.hljs {
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
-  font-size: 0.875rem;
-  line-height: 1.5;
+/* Blockquotes */
+blockquote {
+  margin: 0.75rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid #000;
 }
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 0.4rem 0.75rem;
+  text-align: left;
+}
+
+th {
+  background: #f5f5f5;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #000;
+  margin: 1.5rem 0;
+}
+
+/* Definition Lists */
+dl {
+  margin: 0.75rem 0;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Text Formatting */
+strong { font-weight: bold; }
+em { font-style: italic; }
+del { text-decoration: line-through; }
 
 /* Footer */
 footer {
-  background: var(--accent-bg);
-  padding: 2rem 0;
-  margin-top: 4rem;
+  margin-top: 2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #000;
+  font-size: 0.9rem;
 }
 
-.footer-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  text-align: center;
-  color: #6b7280;
-}
-
-.footer-content a {
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.footer-content a:hover {
-  text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 640px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  .post-header h1,
-  .page-header h1 {
-    font-size: 2rem;
-  }
-
-  .nav-links a {
-    margin-left: 1rem;
+/* Responsive */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
   }
 }

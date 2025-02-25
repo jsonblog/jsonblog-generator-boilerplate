@@ -141,8 +141,8 @@ async function processContent<T extends BlogPost | BlogPage>(
   );
 
   return processedItems.sort((a, b) => {
-    if (type === 'post' && 'publishedDate' in a && 'publishedDate' in b) {
-      return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
+    if (type === 'post' && 'createdAt' in a && 'createdAt' in b) {
+      return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
     }
     return 0;
   });

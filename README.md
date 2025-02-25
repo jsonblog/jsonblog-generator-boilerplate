@@ -33,18 +33,18 @@ import { generator } from 'jsonblog-generator-boilerplate';
 const blog = {
   site: {
     title: 'My Blog',
-    description: 'A blog about my thoughts'
+    description: 'A blog about my thoughts',
   },
   basics: {
-    name: 'John Doe'
+    name: 'John Doe',
   },
   posts: [
     {
       title: 'Hello World',
       content: '# My First Post\n\nWelcome to my blog!',
-      publishedDate: '2025-02-25'
-    }
-  ]
+      publishedDate: '2025-02-25',
+    },
+  ],
 };
 
 const files = await generator(blog, './output');
@@ -117,24 +117,17 @@ This boilerplate is designed to be forked and customized. Here's how to create y
 Your generator only needs to implement one function:
 
 ```typescript
-async function generator(blog: BlogConfig, outputPath: string): Promise<GeneratedFile[]>
+async function generator(blog: BlogConfig, outputPath: string): Promise<GeneratedFile[]>;
 ```
 
 The boilerplate handles:
+
 - Markdown rendering
 - File management
 - Template processing
 - Content fetching (local, remote, IPFS)
 
 You just focus on making it look great!
-
-## Dependencies
-
-This generator uses:
-- [jsonblog-schema](https://github.com/jsonblog/jsonblog-schema) for blog validation
-- Handlebars for templating
-- Marked for Markdown rendering
-- Highlight.js for syntax highlighting
 
 ## Contributing
 

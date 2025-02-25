@@ -9,8 +9,7 @@
   "posts": [
     {
       "title": "An Open Source Computer vision model to identify the Australian Aboriginal Flag [Tutorial]",
-      "source": "https://raw.githubusercontent.com/australia/aboriginal-flag-cv-model/master/README.md",
-      "publishedDate": "2020-09-05"
+      "source": "https://raw.githubusercontent.com/australia/aboriginal-flag-cv-model/master/README.md"
     },
     {
       "title": "Introducing JSON Blog",

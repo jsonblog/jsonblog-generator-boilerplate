@@ -55,7 +55,7 @@ const mainCss = fs.readFileSync(path.join(__dirname, '../templates/main.css'), '
 const md = new MarkdownIt({
     html: true,
     linkify: true,
-    typographer: true
+    typographer: true,
 });
 // Register handlebars helpers
 handlebars_1.default.registerHelper('formatDate', (date) => {
@@ -119,7 +119,7 @@ async function processContent(items, type, basePath) {
                     slug: (0, slugify_1.default)(item.title, {
                         lower: true,
                         strict: true,
-                        remove: /[*+~.()'"!:@]/g
+                        remove: /[*+~.()'"!:@]/g,
                     }),
                 };
             }
@@ -132,7 +132,7 @@ async function processContent(items, type, basePath) {
                     slug: (0, slugify_1.default)(item.title, {
                         lower: true,
                         strict: true,
-                        remove: /[*+~.()'"!:@]/g
+                        remove: /[*+~.()'"!:@]/g,
                     }),
                 };
             }
@@ -144,7 +144,7 @@ async function processContent(items, type, basePath) {
                     slug: (0, slugify_1.default)(item.title, {
                         lower: true,
                         strict: true,
-                        remove: /[*+~.()'"!:@]/g
+                        remove: /[*+~.()'"!:@]/g,
                     }),
                 };
             }
@@ -157,14 +157,14 @@ async function processContent(items, type, basePath) {
                 slug: (0, slugify_1.default)(item.title, {
                     lower: true,
                     strict: true,
-                    remove: /[*+~.()'"!:@]/g
+                    remove: /[*+~.()'"!:@]/g,
                 }),
             };
         }
     }));
     return processedItems.sort((a, b) => {
-        if (type === 'post' && 'publishedDate' in a && 'publishedDate' in b) {
-            return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
+        if (type === 'post' && 'createdAt' in a && 'createdAt' in b) {
+            return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
         }
         return 0;
     });

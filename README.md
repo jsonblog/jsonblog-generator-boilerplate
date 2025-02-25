@@ -128,6 +128,14 @@ The boilerplate handles:
 
 You just focus on making it look great!
 
+## Dependencies
+
+This generator uses:
+- [jsonblog-schema](https://github.com/jsonblog/jsonblog-schema) for blog validation
+- Handlebars for templating
+- Marked for Markdown rendering
+- Highlight.js for syntax highlighting
+
 ## Contributing
 
 1. Fork the repository

@@ -3,8 +3,8 @@
     {{#each posts}}
       <article class="post-card">
         <h2><a href="{{this.slug}}.html">{{this.title}}</a></h2>
-        {{#if this.publishedDate}}
-          <time datetime="{{this.publishedDate}}">{{formatDate this.publishedDate}}</time>
+        {{#if this.createdAt}}
+          <time datetime="{{this.createdAt}}">{{formatDate this.createdAt}}</time>
         {{/if}}
       </article>
     {{/each}}

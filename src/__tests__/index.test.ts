@@ -14,7 +14,7 @@ describe('JsonBlog Generator', () => {
       {
         title: 'Test Post',
         content: '# Test Content',
-        publishedDate: '2025-02-25',
+        createdAt: '2025-02-25',
       },
     ],
     pages: [

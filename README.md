@@ -42,7 +42,7 @@ const blog = {
     {
       title: 'Hello World',
       content: '# My First Post\n\nWelcome to my blog!',
-      publishedDate: '2025-02-25',
+      createdAt: '2025-02-25',
     },
   ],
 };

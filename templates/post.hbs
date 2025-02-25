@@ -1,7 +1,7 @@
 {{#> layout}}
   {{#*inline "content"}}
     <article>
-      <time datetime="{{post.publishedDate}}">{{formatDate post.publishedDate}}</time>
+      <time datetime="{{post.createdAt}}">{{formatDate post.createdAt}}</time>
       {{{post.content}}}
     </article>
   {{/inline}}

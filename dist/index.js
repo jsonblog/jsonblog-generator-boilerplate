@@ -116,7 +116,11 @@ async function processContent(items, type, basePath) {
                 return {
                     ...item,
                     content: '<p>Error: No content found</p>',
-                    slug: (0, slugify_1.default)(item.title, { lower: true }),
+                    slug: (0, slugify_1.default)(item.title, {
+                        lower: true,
+                        strict: true,
+                        remove: /[*+~.()'"!:@]/g
+                    }),
                 };
             }
             // Try to render markdown, fallback to error message if it fails
@@ -125,7 +129,11 @@ async function processContent(items, type, basePath) {
                 return {
                     ...item,
                     content: rendered,
-                    slug: (0, slugify_1.default)(item.title, { lower: true }),
+                    slug: (0, slugify_1.default)(item.title, {
+                        lower: true,
+                        strict: true,
+                        remove: /[*+~.()'"!:@]/g
+                    }),
                 };
             }
             catch (error) {
@@ -133,7 +141,11 @@ async function processContent(items, type, basePath) {
                 return {
                     ...item,
                     content: '<p>Error: Failed to render content</p>',
-                    slug: (0, slugify_1.default)(item.title, { lower: true }),
+                    slug: (0, slugify_1.default)(item.title, {
+                        lower: true,
+                        strict: true,
+                        remove: /[*+~.()'"!:@]/g
+                    }),
                 };
             }
         }
@@ -142,7 +154,11 @@ async function processContent(items, type, basePath) {
             return {
                 ...item,
                 content: '<p>Error: Failed to process content</p>',
-                slug: (0, slugify_1.default)(item.title, { lower: true }),
+                slug: (0, slugify_1.default)(item.title, {
+                    lower: true,
+                    strict: true,
+                    remove: /[*+~.()'"!:@]/g
+                }),
             };
         }
     }));

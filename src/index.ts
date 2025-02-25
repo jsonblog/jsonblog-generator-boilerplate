@@ -93,7 +93,11 @@ async function processContent<T extends BlogPost | BlogPage>(
           return {
             ...item,
             content: '<p>Error: No content found</p>',
-            slug: slugify(item.title, { lower: true }),
+            slug: slugify(item.title, { 
+              lower: true,
+              strict: true,
+              remove: /[*+~.()'"!:@]/g
+            }),
           };
         }
 
@@ -103,14 +107,22 @@ async function processContent<T extends BlogPost | BlogPage>(
           return {
             ...item,
             content: rendered,
-            slug: slugify(item.title, { lower: true }),
+            slug: slugify(item.title, { 
+              lower: true,
+              strict: true,
+              remove: /[*+~.()'"!:@]/g
+            }),
           };
         } catch (error) {
           console.error(`Failed to render markdown for "${item.title}":`, error);
           return {
             ...item,
             content: '<p>Error: Failed to render content</p>',
-            slug: slugify(item.title, { lower: true }),
+            slug: slugify(item.title, { 
+              lower: true,
+              strict: true,
+              remove: /[*+~.()'"!:@]/g
+            }),
           };
         }
       } catch (error) {
@@ -118,7 +130,11 @@ async function processContent<T extends BlogPost | BlogPage>(
         return {
           ...item,
           content: '<p>Error: Failed to process content</p>',
-          slug: slugify(item.title, { lower: true }),
+          slug: slugify(item.title, { 
+            lower: true,
+            strict: true,
+            remove: /[*+~.()'"!:@]/g
+          }),
         };
       }
     })

@@ -49,7 +49,7 @@ async function fetchFile(uri: string, basePath: string): Promise<string | undefi
     } else {
       // Local file - resolve relative to blog.json
       console.log('Base path:', basePath);
-      const filePath = path.resolve(path.dirname(basePath), uri);
+      const filePath = path.resolve(basePath, uri.replace(/^\.\//, ''));
       console.log('Resolved file path:', filePath);
       if (!fs.existsSync(filePath)) {
         console.error('File does not exist:', filePath);

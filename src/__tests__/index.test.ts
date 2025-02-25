@@ -1,4 +1,5 @@
-import { generator } from '../index';
+import generator = require('../index');
+import { GeneratedFile } from '../types';
 
 describe('JsonBlog Generator', () => {
   const mockBlog = {
@@ -25,21 +26,21 @@ describe('JsonBlog Generator', () => {
   };
 
   it('should generate expected files', async () => {
-    const files = await generator(mockBlog, '/test/path');
+    const files: GeneratedFile[] = await generator(mockBlog, '/test/path');
     
     // Should generate index.html, post page, about page, and CSS
     expect(files).toHaveLength(4);
     
     // Check for required files
-    expect(files.find(f => f.name === 'index.html')).toBeTruthy();
-    expect(files.find(f => f.name === 'test-post.html')).toBeTruthy();
-    expect(files.find(f => f.name === 'about.html')).toBeTruthy();
-    expect(files.find(f => f.name === 'main.css')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'index.html')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'test-post.html')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'about.html')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'main.css')).toBeTruthy();
   });
 
   it('should handle markdown content', async () => {
-    const files = await generator(mockBlog, '/test/path');
-    const post = files.find(f => f.name === 'test-post.html');
+    const files: GeneratedFile[] = await generator(mockBlog, '/test/path');
+    const post = files.find((f: GeneratedFile) => f.name === 'test-post.html');
     
     // Check if markdown was rendered to HTML
     expect(post?.content).toContain('<h1>Test Content</h1>');
@@ -57,7 +58,7 @@ describe('JsonBlog Generator', () => {
       posts: []
     };
 
-    const files = await generator(minimalBlog, '/test/path');
+    const files: GeneratedFile[] = await generator(minimalBlog, '/test/path');
     expect(files.length).toBeGreaterThan(0);
   });
 });

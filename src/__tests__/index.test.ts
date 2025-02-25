@@ -5,32 +5,32 @@ describe('JsonBlog Generator', () => {
   const mockBlog = {
     site: {
       title: 'Test Blog',
-      description: 'A test blog'
+      description: 'A test blog',
     },
     basics: {
-      name: 'Test Author'
+      name: 'Test Author',
     },
     posts: [
       {
         title: 'Test Post',
         content: '# Test Content',
-        publishedDate: '2025-02-25'
-      }
+        publishedDate: '2025-02-25',
+      },
     ],
     pages: [
       {
         title: 'About',
-        content: '# About Page'
-      }
-    ]
+        content: '# About Page',
+      },
+    ],
   };
 
   it('should generate expected files', async () => {
     const files: GeneratedFile[] = await generator(mockBlog, '/test/path');
-    
+
     // Should generate index.html, post page, about page, and CSS
     expect(files).toHaveLength(4);
-    
+
     // Check for required files
     expect(files.find((f: GeneratedFile) => f.name === 'index.html')).toBeTruthy();
     expect(files.find((f: GeneratedFile) => f.name === 'test-post.html')).toBeTruthy();
@@ -41,7 +41,7 @@ describe('JsonBlog Generator', () => {
   it('should handle markdown content', async () => {
     const files: GeneratedFile[] = await generator(mockBlog, '/test/path');
     const post = files.find((f: GeneratedFile) => f.name === 'test-post.html');
-    
+
     // Check if markdown was rendered to HTML
     expect(post?.content).toContain('<h1>Test Content</h1>');
   });
@@ -50,12 +50,12 @@ describe('JsonBlog Generator', () => {
     const minimalBlog = {
       site: {
         title: 'Test Blog',
-        description: 'A test blog'
+        description: 'A test blog',
       },
       basics: {
-        name: 'Test Author'
+        name: 'Test Author',
       },
-      posts: []
+      posts: [],
     };
 
     const files: GeneratedFile[] = await generator(minimalBlog, '/test/path');

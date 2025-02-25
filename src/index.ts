@@ -23,7 +23,7 @@ const mainCss = fs.readFileSync(path.join(__dirname, '../templates/main.css'), '
 const md = new MarkdownIt({
   html: true,
   linkify: true,
-  typographer: true
+  typographer: true,
 });
 
 // Register handlebars helpers
@@ -79,7 +79,7 @@ async function processContent<T extends BlogPost | BlogPage>(
     items.map(async (item) => {
       try {
         let content = item.content || '';
-        
+
         // If source is specified, fetch content from file
         if ('source' in item && item.source) {
           const fetchedContent = await fetchFile(item.source, basePath);
@@ -93,10 +93,10 @@ async function processContent<T extends BlogPost | BlogPage>(
           return {
             ...item,
             content: '<p>Error: No content found</p>',
-            slug: slugify(item.title, { 
+            slug: slugify(item.title, {
               lower: true,
               strict: true,
-              remove: /[*+~.()'"!:@]/g
+              remove: /[*+~.()'"!:@]/g,
             }),
           };
         }
@@ -107,10 +107,10 @@ async function processContent<T extends BlogPost | BlogPage>(
           return {
             ...item,
             content: rendered,
-            slug: slugify(item.title, { 
+            slug: slugify(item.title, {
               lower: true,
               strict: true,
-              remove: /[*+~.()'"!:@]/g
+              remove: /[*+~.()'"!:@]/g,
             }),
           };
         } catch (error) {
@@ -118,10 +118,10 @@ async function processContent<T extends BlogPost | BlogPage>(
           return {
             ...item,
             content: '<p>Error: Failed to render content</p>',
-            slug: slugify(item.title, { 
+            slug: slugify(item.title, {
               lower: true,
               strict: true,
-              remove: /[*+~.()'"!:@]/g
+              remove: /[*+~.()'"!:@]/g,
             }),
           };
         }
@@ -130,10 +130,10 @@ async function processContent<T extends BlogPost | BlogPage>(
         return {
           ...item,
           content: '<p>Error: Failed to process content</p>',
-          slug: slugify(item.title, { 
+          slug: slugify(item.title, {
             lower: true,
             strict: true,
-            remove: /[*+~.()'"!:@]/g
+            remove: /[*+~.()'"!:@]/g,
           }),
         };
       }
@@ -156,7 +156,7 @@ const generator = async (blog: Blog, basePath: string): Promise<GeneratedFile[]>
   console.log('Processing posts...');
   const posts = await processContent(blog.posts, 'post', basePath);
   console.log('Posts processed:', posts.length);
-  
+
   console.log('Processing pages...');
   const pages = blog.pages ? await processContent(blog.pages, 'page', basePath) : [];
   console.log('Pages processed:', pages.length);

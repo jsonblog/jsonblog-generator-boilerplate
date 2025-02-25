@@ -1,20 +1,21 @@
 # JsonBlog Generator Boilerplate
 
-A modern, customizable generator for JsonBlog that serves as a reference implementation and starting point for creating your own generators.
+[![npm version](https://badge.fury.io/js/jsonblog-generator-boilerplate.svg)](https://badge.fury.io/js/jsonblog-generator-boilerplate)
+[![CI](https://github.com/jsonblog/jsonblog-generator-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/jsonblog/jsonblog-generator-boilerplate/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-4.4.4-blue.svg)](https://www.typescriptlang.org/)
 
-## Overview
-
-JsonBlog is designed to be language-agnostic, allowing you to generate your blog using any technology stack. A `generator` is simply a function that takes a parsed `blog.json` file and returns an array of files with their contents. These files are then written to the filesystem to create your blog.
+A modern, TypeScript-based generator for JsonBlog that transforms your JSON blog content into a beautiful static website.
 
 ## Features
 
-- 🎨 Modern, responsive design
-- 📱 Mobile-friendly layout
-- 🌙 Clean typography with Inter font
-- ✨ Syntax highlighting for code blocks
-- 🚀 Fast and lightweight
-- 📦 TypeScript support
-- 🔄 Backward compatible with v1
+- 🚀 Full TypeScript support
+- 📝 Markdown rendering with code highlighting
+- 🎨 Clean, minimalist design
+- 🔄 Live reload during development
+- 🛠️ Customizable templates using Handlebars
+- 📱 Responsive layout
+- 🔒 Type-safe blog configuration
 
 ## Installation
 
@@ -24,138 +25,89 @@ npm install jsonblog-generator-boilerplate
 
 ## Usage
 
-### Basic Example
+1. Create a `blog.json` file:
 
-```typescript
-import generator from 'jsonblog-generator-boilerplate';
-
-const blog = {
-  site: {
-    title: 'My Blog',
-    description: 'A blog about coding and technology'
+```json
+{
+  "site": {
+    "title": "My Blog",
+    "description": "A blog about my thoughts"
   },
-  basics: {
-    name: 'John Doe'
-  },
-  posts: [
+  "posts": [
     {
-      title: 'Hello World',
-      source: 'posts/hello-world.md',
-      publishedDate: '2025-02-25'
+      "title": "My First Post",
+      "content": "# Hello World\n\nThis is my first blog post!",
+      "publishedDate": "2025-02-25"
     }
   ]
-};
-
-// Generate blog files
-const files = await generator(blog);
-
-// Files will be an array of objects like:
-// [
-//   { name: 'index.html', content: '...' },
-//   { name: 'hello-world.html', content: '...' },
-//   { name: 'main.css', content: '...' }
-// ]
-```
-
-### Creating Your Own Generator
-
-A generator is a function that follows this interface:
-
-```typescript
-interface BlogFile {
-  name: string;    // Output filename (e.g., 'index.html')
-  content: string; // File contents
-}
-
-interface Generator {
-  (blog: Blog): Promise<BlogFile[]>;
 }
 ```
 
-Here's a minimal generator example:
+2. Use with jsonblog-cli:
 
-```typescript
-const generator = async (blog) => {
-  const files = [];
-  
-  // Generate index.html
-  files.push({
-    name: 'index.html',
-    content: `
-      <h1>${blog.site.title}</h1>
-      <p>${blog.site.description}</p>
-      <ul>
-        ${blog.posts.map(post => `
-          <li><a href="${post.slug}.html">${post.title}</a></li>
-        `).join('')}
-      </ul>
-    `
-  });
-
-  return files;
-};
-```
-
-## Template Structure
-
-The boilerplate uses Handlebars for templating with the following structure:
-
-- `layout.hbs` - Main layout template
-- `index.hbs` - Home page template
-- `post.hbs` - Individual post template
-- `page.hbs` - Static page template
-- `main.css` - Styles
-
-## Blog.json Schema
-
-```typescript
-interface Blog {
-  site: {
-    title: string;
-    description: string;
-  };
-  basics: {
-    name: string;
-  };
-  posts: Array<{
-    title: string;
-    source: string;        // Path or URL to markdown file
-    publishedDate?: string;
-  }>;
-  pages?: Array<{
-    title: string;
-    source: string;        // Path or URL to markdown file
-  }>;
-}
+```bash
+npm install -g jsonblog-cli
+jsonblog build blog.json
 ```
 
 ## Development
 
+### Prerequisites
+
+- Node.js >= 16
+- npm >= 7
+
+### Setup
+
 ```bash
+# Clone the repository
+git clone https://github.com/jsonblog/jsonblog-generator-boilerplate.git
+cd jsonblog-generator-boilerplate
+
 # Install dependencies
 npm install
 
-# Build TypeScript
+# Build the project
 npm run build
-
-# Run tests
-npm test
-
-# Format code
-npm run format
-
-# Lint code
-npm run lint
 ```
+
+### Available Scripts
+
+- `npm run build` - Build the TypeScript code
+- `npm test` - Run tests
+- `npm run lint` - Lint the code
+- `npm run format` - Format code with Prettier
+- `npm run release:patch` - Release a patch version
+- `npm run release:minor` - Release a minor version
+- `npm run release:major` - Release a major version
+
+### Release Process
+
+1. Make your changes
+2. Run tests and linting: `npm test && npm run lint`
+3. Choose the appropriate release command:
+   - `npm run release:patch` for bug fixes
+   - `npm run release:minor` for new features
+   - `npm run release:major` for breaking changes
+4. The release will be automatically published to npm when you create a GitHub release
+
+## Templates
+
+The generator uses Handlebars templates located in the `templates` directory:
+
+- `layout.hbs` - Main layout template
+- `index.hbs` - Blog index page
+- `post.hbs` - Individual post template
+- `page.hbs` - Static page template
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Submit a pull request
 
 ## License
 
-ISC
-
-## Credits
-
-Built with ❤️ for [JsonBlog](https://github.com/thomasdavis/jsonblog)
+MIT 

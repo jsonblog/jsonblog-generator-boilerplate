@@ -91,18 +91,19 @@ async function fetchFile(uri: string, basePath: string): Promise<string | undefi
       // Local file - resolve relative to blog.json
       logger.debug({ uri, basePath }, 'Reading local file');
       const filePath = path.resolve(basePath, uri.replace(/^\.\//, ''));
-      
+
       if (!fs.existsSync(filePath)) {
         logger.warn({ filePath }, 'File does not exist');
         return undefined;
       }
-      
+
       const stats = fs.statSync(filePath);
-      if (stats.size > 10 * 1024 * 1024) { // 10MB limit
+      if (stats.size > 10 * 1024 * 1024) {
+        // 10MB limit
         logger.warn({ filePath, size: stats.size }, 'File too large, skipping');
         return undefined;
       }
-      
+
       const content = fs.readFileSync(filePath, 'utf8');
       logger.debug({ filePath, size: content.length }, 'Local file loaded successfully');
       return content;
@@ -204,319 +205,317 @@ async function processContent<T extends BlogPost | BlogPage>(
 const generator = async (blog: Blog, basePath: string): Promise<GeneratedFile[]> => {
   logger.info({ basePath }, 'Starting blog generation');
   const files: GeneratedFile[] = [];
-  
+
   try {
     // Validate input
     if (!blog) {
       throw new Error('Blog configuration is required');
     }
-    
+
     if (!blog.site || !blog.site.title) {
       throw new Error('Blog site configuration with title is required');
     }
-    
+
     if (!blog.basics || !blog.basics.name) {
       throw new Error('Blog basics configuration with author name is required');
     }
 
-  // Process posts and pages
-  logger.info('Processing posts...');
-  const posts = await processContent(blog.posts, 'post', basePath);
-  logger.info(`Posts processed: ${posts.length}`);
+    // Process posts and pages
+    logger.info('Processing posts...');
+    const posts = await processContent(blog.posts, 'post', basePath);
+    logger.info(`Posts processed: ${posts.length}`);
 
-  logger.info('Processing pages...');
-  const pages = blog.pages ? await processContent(blog.pages, 'page', basePath) : [];
-  logger.info(`Pages processed: ${pages.length}`);
+    logger.info('Processing pages...');
+    const pages = blog.pages ? await processContent(blog.pages, 'page', basePath) : [];
+    logger.info(`Pages processed: ${pages.length}`);
 
-  // Compile templates
-  const compiledTemplates = {
-    index: Handlebars.compile(templateFiles.index),
-    post: Handlebars.compile(templateFiles.post),
-    page: Handlebars.compile(templateFiles.page),
-    tag: Handlebars.compile(templateFiles.tag),
-    category: Handlebars.compile(templateFiles.category),
-  };
-
-  // Pagination settings
-  const postsPerPage = blog.settings?.postsPerPage || 10;
-  const totalPages = Math.max(1, Math.ceil(posts.length / postsPerPage)); // At least 1 page
-  
-  // Generate paginated index pages in parallel
-  logger.info('Generating paginated index pages...');
-  const paginationTasks = [];
-  
-  for (let page = 1; page <= totalPages; page++) {
-    const startIndex = (page - 1) * postsPerPage;
-    const endIndex = startIndex + postsPerPage;
-    const pagePosts = posts.slice(startIndex, endIndex);
-    
-    const pagination = {
-      currentPage: page,
-      totalPages,
-      hasNext: page < totalPages,
-      hasPrev: page > 1,
-      nextPage: page < totalPages ? page + 1 : null,
-      prevPage: page > 1 ? page - 1 : null,
-      isFirstPage: page === 1,
-      isLastPage: page === totalPages,
+    // Compile templates
+    const compiledTemplates = {
+      index: Handlebars.compile(templateFiles.index),
+      post: Handlebars.compile(templateFiles.post),
+      page: Handlebars.compile(templateFiles.page),
+      tag: Handlebars.compile(templateFiles.tag),
+      category: Handlebars.compile(templateFiles.category),
     };
-    
-    const pageData = {
-      blog,
-      posts: pagePosts,
-      pages,
-      pagination,
-    };
-    
-    if (page === 1) {
-      // First page is also the index
+
+    // Pagination settings
+    const postsPerPage = blog.settings?.postsPerPage || 10;
+    const totalPages = Math.max(1, Math.ceil(posts.length / postsPerPage)); // At least 1 page
+
+    // Generate paginated index pages in parallel
+    logger.info('Generating paginated index pages...');
+    const paginationTasks = [];
+
+    for (let page = 1; page <= totalPages; page++) {
+      const startIndex = (page - 1) * postsPerPage;
+      const endIndex = startIndex + postsPerPage;
+      const pagePosts = posts.slice(startIndex, endIndex);
+
+      const pagination = {
+        currentPage: page,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+        nextPage: page < totalPages ? page + 1 : null,
+        prevPage: page > 1 ? page - 1 : null,
+        isFirstPage: page === 1,
+        isLastPage: page === totalPages,
+      };
+
+      const pageData = {
+        blog,
+        posts: pagePosts,
+        pages,
+        pagination,
+      };
+
+      if (page === 1) {
+        // First page is also the index
+        paginationTasks.push(
+          Promise.resolve({
+            name: 'index.html',
+            content: compiledTemplates.index(pageData),
+          })
+        );
+      }
+
+      // Generate numbered page
       paginationTasks.push(
         Promise.resolve({
-          name: 'index.html',
+          name: `page/${page}.html`,
           content: compiledTemplates.index(pageData),
         })
       );
     }
-    
-    // Generate numbered page
-    paginationTasks.push(
-      Promise.resolve({
-        name: `page/${page}.html`,
-        content: compiledTemplates.index(pageData),
+
+    const paginationFiles = await Promise.all(paginationTasks);
+    files.push(...paginationFiles);
+
+    // Generate post pages in parallel
+    logger.info('Generating post pages...');
+    const postFiles = await Promise.all(
+      posts.map(async (post) => {
+        logger.debug(`Generating post: ${post.title}`);
+        return {
+          name: `${post.slug}.html`,
+          content: compiledTemplates.post({ blog, post, posts, pages }),
+        };
       })
     );
-  }
-  
-  const paginationFiles = await Promise.all(paginationTasks);
-  files.push(...paginationFiles);
+    files.push(...postFiles);
 
-  // Generate post pages in parallel
-  logger.info('Generating post pages...');
-  const postFiles = await Promise.all(
-    posts.map(async (post) => {
-      logger.debug(`Generating post: ${post.title}`);
-      return {
-        name: `${post.slug}.html`,
-        content: compiledTemplates.post({ blog, post, posts, pages }),
-      };
-    })
-  );
-  files.push(...postFiles);
+    // Generate pages in parallel
+    logger.info('Generating static pages...');
+    const pageFiles = await Promise.all(
+      pages.map(async (page) => {
+        logger.debug(`Generating page: ${page.title}`);
+        return {
+          name: `${page.slug}.html`,
+          content: compiledTemplates.page({ blog, page, posts, pages }),
+        };
+      })
+    );
+    files.push(...pageFiles);
 
-  // Generate pages in parallel
-  logger.info('Generating static pages...');
-  const pageFiles = await Promise.all(
-    pages.map(async (page) => {
-      logger.debug(`Generating page: ${page.title}`);
-      return {
-        name: `${page.slug}.html`,
-        content: compiledTemplates.page({ blog, page, posts, pages }),
-      };
-    })
-  );
-  files.push(...pageFiles);
+    // Generate tag pages
+    logger.info('Generating tag pages...');
+    const tagMap = new Map<string, BlogPost[]>();
 
-  // Generate tag pages
-  logger.info('Generating tag pages...');
-  const tagMap = new Map<string, BlogPost[]>();
-  
-  // Collect all tags
-  for (const post of posts) {
-    if (post.tags) {
-      for (const tag of post.tags) {
-        if (!tagMap.has(tag)) {
-          tagMap.set(tag, []);
+    // Collect all tags
+    for (const post of posts) {
+      if (post.tags) {
+        for (const tag of post.tags) {
+          if (!tagMap.has(tag)) {
+            tagMap.set(tag, []);
+          }
+          tagMap.get(tag)!.push(post);
         }
-        tagMap.get(tag)!.push(post);
       }
     }
-  }
-  
-  // Generate tag pages in parallel
-  const tagFiles = await Promise.all(
-    Array.from(tagMap.entries()).map(async ([tag, tagPosts]) => {
-      const tagSlug = slugify(tag, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      });
-      logger.debug(`Generating tag page: ${tag}`);
-      return {
-        name: `tag/${tagSlug}.html`,
-        content: compiledTemplates.tag({ blog, tag, posts: tagPosts, pages }),
-      };
-    })
-  );
-  files.push(...tagFiles);
 
-  // Generate category pages
-  logger.info('Generating category pages...');
-  const categoryMap = new Map<string, BlogPost[]>();
-  
-  // Collect all categories
-  for (const post of posts) {
-    if (post.categories) {
-      for (const category of post.categories) {
-        if (!categoryMap.has(category)) {
-          categoryMap.set(category, []);
+    // Generate tag pages in parallel
+    const tagFiles = await Promise.all(
+      Array.from(tagMap.entries()).map(async ([tag, tagPosts]) => {
+        const tagSlug = slugify(tag, {
+          lower: true,
+          strict: true,
+          remove: /[*+~.()'"!:@]/g,
+        });
+        logger.debug(`Generating tag page: ${tag}`);
+        return {
+          name: `tag/${tagSlug}.html`,
+          content: compiledTemplates.tag({ blog, tag, posts: tagPosts, pages }),
+        };
+      })
+    );
+    files.push(...tagFiles);
+
+    // Generate category pages
+    logger.info('Generating category pages...');
+    const categoryMap = new Map<string, BlogPost[]>();
+
+    // Collect all categories
+    for (const post of posts) {
+      if (post.categories) {
+        for (const category of post.categories) {
+          if (!categoryMap.has(category)) {
+            categoryMap.set(category, []);
+          }
+          categoryMap.get(category)!.push(post);
         }
-        categoryMap.get(category)!.push(post);
       }
     }
-  }
-  
-  // Generate category pages in parallel
-  const categoryFiles = await Promise.all(
-    Array.from(categoryMap.entries()).map(async ([category, categoryPosts]) => {
-      const categorySlug = slugify(category, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      });
-      logger.debug(`Generating category page: ${category}`);
-      return {
-        name: `category/${categorySlug}.html`,
-        content: compiledTemplates.category({ blog, category, posts: categoryPosts, pages }),
-      };
-    })
-  );
-  files.push(...categoryFiles);
 
-  // Generate RSS feed
-  logger.info('Generating RSS feed...');
-  const siteUrl = blog.meta?.canonical || 'https://example.com';
-  
-  const feed = new RSS({
-    title: blog.site.title,
-    description: blog.site.description,
-    generator: 'JsonBlog Generator',
-    feed_url: `${siteUrl}/rss.xml`,
-    site_url: siteUrl,
-    image_url: blog.basics.image,
-    language: 'en',
-    pubDate: new Date().toUTCString(),
-    ttl: 60,
-  });
-  
-  // Add posts to RSS feed (limit to 20 most recent)
-  const rssPosts = posts.slice(0, 20);
-  for (const post of rssPosts) {
-    // Strip HTML tags for description
-    const stripHtml = (html: string): string => {
-      return html.replace(/<[^>]*>/g, '').trim();
-    };
-    
-    const plainTextContent = post.content ? stripHtml(post.content) : '';
-    const description = post.description || plainTextContent.substring(0, 200) + (plainTextContent.length > 200 ? '...' : '');
-    
-    feed.item({
-      title: post.title,
-      description: description,
-      url: `${siteUrl}/${post.slug}.html`,
-      guid: `${siteUrl}/${post.slug}.html`,
-      date: post.createdAt || new Date().toISOString(),
-      categories: [
-        ...(post.tags || []),
-        ...(post.categories || [])
-      ],
+    // Generate category pages in parallel
+    const categoryFiles = await Promise.all(
+      Array.from(categoryMap.entries()).map(async ([category, categoryPosts]) => {
+        const categorySlug = slugify(category, {
+          lower: true,
+          strict: true,
+          remove: /[*+~.()'"!:@]/g,
+        });
+        logger.debug(`Generating category page: ${category}`);
+        return {
+          name: `category/${categorySlug}.html`,
+          content: compiledTemplates.category({ blog, category, posts: categoryPosts, pages }),
+        };
+      })
+    );
+    files.push(...categoryFiles);
+
+    // Generate RSS feed
+    logger.info('Generating RSS feed...');
+    const siteUrl = blog.meta?.canonical || 'https://example.com';
+
+    const feed = new RSS({
+      title: blog.site.title,
+      description: blog.site.description,
+      generator: 'JsonBlog Generator',
+      feed_url: `${siteUrl}/rss.xml`,
+      site_url: siteUrl,
+      image_url: blog.basics.image,
+      language: 'en',
+      pubDate: new Date().toUTCString(),
+      ttl: 60,
     });
-  }
-  
-  files.push({
-    name: 'rss.xml',
-    content: feed.xml({ indent: true }),
-  });
 
-  // Generate sitemap
-  logger.info('Generating sitemap...');
-  const generateSitemap = (): string => {
-    const urls: string[] = [];
-    
-    // Add homepage
-    urls.push(`  <url>
+    // Add posts to RSS feed (limit to 20 most recent)
+    const rssPosts = posts.slice(0, 20);
+    for (const post of rssPosts) {
+      // Strip HTML tags for description
+      const stripHtml = (html: string): string => {
+        return html.replace(/<[^>]*>/g, '').trim();
+      };
+
+      const plainTextContent = post.content ? stripHtml(post.content) : '';
+      const description =
+        post.description ||
+        plainTextContent.substring(0, 200) + (plainTextContent.length > 200 ? '...' : '');
+
+      feed.item({
+        title: post.title,
+        description: description,
+        url: `${siteUrl}/${post.slug}.html`,
+        guid: `${siteUrl}/${post.slug}.html`,
+        date: post.createdAt || new Date().toISOString(),
+        categories: [...(post.tags || []), ...(post.categories || [])],
+      });
+    }
+
+    files.push({
+      name: 'rss.xml',
+      content: feed.xml({ indent: true }),
+    });
+
+    // Generate sitemap
+    logger.info('Generating sitemap...');
+    const generateSitemap = (): string => {
+      const urls: string[] = [];
+
+      // Add homepage
+      urls.push(`  <url>
     <loc>${siteUrl}/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>`);
-    
-    // Add posts
-    for (const post of posts) {
-      urls.push(`  <url>
+
+      // Add posts
+      for (const post of posts) {
+        urls.push(`  <url>
     <loc>${siteUrl}/${post.slug}.html</loc>
     <lastmod>${post.updatedAt || post.createdAt || new Date().toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>`);
-    }
-    
-    // Add pages
-    for (const page of pages) {
-      urls.push(`  <url>
+      }
+
+      // Add pages
+      for (const page of pages) {
+        urls.push(`  <url>
     <loc>${siteUrl}/${page.slug}.html</loc>
     <lastmod>${page.updatedAt || page.createdAt || new Date().toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`);
-    }
-    
-    // Add tag pages
-    for (const [tag] of tagMap) {
-      const tagSlug = slugify(tag, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      });
-      urls.push(`  <url>
+      }
+
+      // Add tag pages
+      for (const [tag] of tagMap) {
+        const tagSlug = slugify(tag, {
+          lower: true,
+          strict: true,
+          remove: /[*+~.()'"!:@]/g,
+        });
+        urls.push(`  <url>
     <loc>${siteUrl}/tag/${tagSlug}.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>`);
-    }
-    
-    // Add category pages
-    for (const [category] of categoryMap) {
-      const categorySlug = slugify(category, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      });
-      urls.push(`  <url>
+      }
+
+      // Add category pages
+      for (const [category] of categoryMap) {
+        const categorySlug = slugify(category, {
+          lower: true,
+          strict: true,
+          remove: /[*+~.()'"!:@]/g,
+        });
+        urls.push(`  <url>
     <loc>${siteUrl}/category/${categorySlug}.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>`);
-    }
-    
-    // Add pagination pages
-    for (let page = 2; page <= totalPages; page++) {
-      urls.push(`  <url>
+      }
+
+      // Add pagination pages
+      for (let page = 2; page <= totalPages; page++) {
+        urls.push(`  <url>
     <loc>${siteUrl}/page/${page}.html</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>`);
-    }
-    
-    return `<?xml version="1.0" encoding="UTF-8"?>
+      }
+
+      return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.join('\n')}
 </urlset>`;
-  };
-  
-  files.push({
-    name: 'sitemap.xml',
-    content: generateSitemap(),
-  });
+    };
 
-  // Add CSS file
-  logger.info('Adding CSS file...');
-  files.push({
-    name: 'main.css',
-    content: mainCss,
-  });
+    files.push({
+      name: 'sitemap.xml',
+      content: generateSitemap(),
+    });
 
-  logger.info({ filesGenerated: files.length }, 'Blog generation completed successfully');
-  return files;
-  
+    // Add CSS file
+    logger.info('Adding CSS file...');
+    files.push({
+      name: 'main.css',
+      content: mainCss,
+    });
+
+    logger.info({ filesGenerated: files.length }, 'Blog generation completed successfully');
+    return files;
   } catch (error) {
     logger.error({ error }, 'Blog generation failed');
     throw error;

@@ -7,7 +7,11 @@ import generateBlog = require('./index');
 import { Blog } from './types';
 
 const app = express();
-const PORT = process.env.TEST_PORT ? parseInt(process.env.TEST_PORT, 10) : (process.env.PORT ? parseInt(process.env.PORT, 10) : 3500);
+const PORT = process.env.TEST_PORT
+  ? parseInt(process.env.TEST_PORT, 10)
+  : process.env.PORT
+    ? parseInt(process.env.PORT, 10)
+    : 3500;
 
 let wss: WebSocket.Server;
 let blogData: Blog;
@@ -49,7 +53,7 @@ async function generateAndCacheFiles(): Promise<void> {
   try {
     const files = await generateBlog(blogData, process.cwd());
     generatedFiles.clear();
-    
+
     for (const file of files) {
       let content = file.content;
       if (file.name.endsWith('.html')) {
@@ -57,7 +61,7 @@ async function generateAndCacheFiles(): Promise<void> {
       }
       generatedFiles.set(file.name, content);
     }
-    
+
     console.log(`Generated ${files.length} files`);
   } catch (error) {
     console.error('Error generating blog:', error);
@@ -78,17 +82,17 @@ let changeTimeout: NodeJS.Timeout | null = null;
 
 async function handleFileChange(filePath: string): Promise<void> {
   console.log(`File changed: ${filePath}`);
-  
+
   // Debounce file changes
   if (changeTimeout) {
     clearTimeout(changeTimeout);
   }
-  
+
   changeTimeout = setTimeout(async () => {
     if (filePath.endsWith('blog.json')) {
       await loadBlogData();
     }
-    
+
     await generateAndCacheFiles();
     notifyClients();
   }, 300);
@@ -96,16 +100,16 @@ async function handleFileChange(filePath: string): Promise<void> {
 
 app.get('*', (req, res) => {
   let requestPath = req.path === '/' ? '/index.html' : req.path;
-  
+
   if (!path.extname(requestPath)) {
     requestPath = `${requestPath}.html`;
   }
-  
+
   const fileName = requestPath.substring(1);
-  
+
   // Set cache control headers
   res.setHeader('Cache-Control', 'no-cache');
-  
+
   if (generatedFiles.has(fileName)) {
     const content = generatedFiles.get(fileName)!;
     const contentType = fileName.endsWith('.css') ? 'text/css' : 'text/html';
@@ -127,34 +131,29 @@ app.get('*', (req, res) => {
 export async function startDevServer(): Promise<void> {
   await loadBlogData();
   await generateAndCacheFiles();
-  
+
   const server = app.listen(PORT, () => {
     console.log(`\n🚀 Development server running at http://localhost:${PORT}`);
     console.log('👀 Watching for changes...\n');
   });
-  
+
   wss = new WebSocket.Server({ server });
-  
+
   wss.on('connection', (ws) => {
     ws.on('pong', () => {
       // Handle pong for keepalive
     });
   });
-  
-  const watcher = chokidar.watch([
-    'blog.json',
-    'src/**/*.ts',
-    'templates/**/*',
-    'assets/**/*'
-  ], {
+
+  const watcher = chokidar.watch(['blog.json', 'src/**/*.ts', 'templates/**/*', 'assets/**/*'], {
     persistent: true,
-    ignoreInitial: true
+    ignoreInitial: true,
   });
-  
+
   watcher.on('change', handleFileChange);
   watcher.on('add', handleFileChange);
   watcher.on('unlink', handleFileChange);
-  
+
   process.on('SIGINT', () => {
     console.log('\n✨ Shutting down development server...');
     watcher.close();

@@ -36,21 +36,21 @@ describe('Parallel Processing', () => {
 
     // Should generate all expected files
     expect(files.length).toBeGreaterThan(60); // 50 posts + 10 pages + index + pagination + tags + categories + RSS + sitemap + CSS
-    
+
     // Verify some specific files exist
-    expect(files.some(f => f.name === 'index.html')).toBe(true);
-    expect(files.some(f => f.name === 'post-1.html')).toBe(true);
-    expect(files.some(f => f.name === 'post-50.html')).toBe(true);
-    expect(files.some(f => f.name === 'page-1.html')).toBe(true);
-    expect(files.some(f => f.name === 'tag/tag0.html')).toBe(true);
-    expect(files.some(f => f.name === 'category/category0.html')).toBe(true);
-    expect(files.some(f => f.name === 'rss.xml')).toBe(true);
-    expect(files.some(f => f.name === 'sitemap.xml')).toBe(true);
-    
+    expect(files.some((f) => f.name === 'index.html')).toBe(true);
+    expect(files.some((f) => f.name === 'post-1.html')).toBe(true);
+    expect(files.some((f) => f.name === 'post-50.html')).toBe(true);
+    expect(files.some((f) => f.name === 'page-1.html')).toBe(true);
+    expect(files.some((f) => f.name === 'tag/tag0.html')).toBe(true);
+    expect(files.some((f) => f.name === 'category/category0.html')).toBe(true);
+    expect(files.some((f) => f.name === 'rss.xml')).toBe(true);
+    expect(files.some((f) => f.name === 'sitemap.xml')).toBe(true);
+
     // Performance check - should complete reasonably quickly
     // This is a soft check as performance varies by machine
     expect(duration).toBeLessThan(5000); // Should complete in less than 5 seconds
-    
+
     console.log(`Generated ${files.length} files in ${duration}ms`);
   });
 
@@ -95,10 +95,10 @@ describe('Parallel Processing', () => {
     // All runs should produce the same number of files
     expect(results[0].length).toBe(results[1].length);
     expect(results[1].length).toBe(results[2].length);
-    
+
     // Verify content consistency
-    const firstRunIndex = results[0].find(f => f.name === 'index.html');
-    const secondRunIndex = results[1].find(f => f.name === 'index.html');
+    const firstRunIndex = results[0].find((f) => f.name === 'index.html');
+    const secondRunIndex = results[1].find((f) => f.name === 'index.html');
     expect(firstRunIndex?.content).toBe(secondRunIndex?.content);
   });
 });

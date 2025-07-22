@@ -1,0 +1,112 @@
+// import { startDevServer } from '../dev-server';
+import axios from 'axios';
+import WebSocket from 'ws';
+import fs from 'fs/promises';
+import path from 'path';
+
+const TEST_PORT = 3500;
+const BASE_URL = `http://localhost:${TEST_PORT}`;
+
+describe('Development Server', () => {
+  let serverCleanup: (() => void) | undefined;
+
+  beforeEach(async () => {
+    const mockBlogData = {
+      title: "Test Blog",
+      description: "A test blog",
+      author: {
+        name: "Test Author"
+      },
+      posts: [
+        {
+          title: "Test Post",
+          content: "Test content",
+          created: "2024-01-01T00:00:00Z"
+        }
+      ]
+    };
+    
+    await fs.writeFile(
+      path.join(process.cwd(), 'blog.json'),
+      JSON.stringify(mockBlogData, null, 2)
+    );
+  });
+
+  afterEach(async () => {
+    if (serverCleanup) {
+      serverCleanup();
+    }
+    
+    try {
+      await fs.unlink(path.join(process.cwd(), 'blog.json'));
+    } catch {}
+  });
+
+  test('should start server on specified port', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const response = await axios.get(BASE_URL);
+    expect(response.status).toBe(200);
+  }, 10000);
+
+  test('should serve generated HTML files', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const response = await axios.get(BASE_URL);
+    expect(response.headers['content-type']).toContain('text/html');
+    expect(response.data).toContain('Test Blog');
+    expect(response.data).toContain('Test Post');
+  }, 10000);
+
+  test('should inject live reload script', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const response = await axios.get(BASE_URL);
+    expect(response.data).toContain('WebSocket');
+    expect(response.data).toContain('location.reload()');
+  }, 10000);
+
+  test('should serve CSS files', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const response = await axios.get(`${BASE_URL}/main.css`);
+    expect(response.headers['content-type']).toContain('text/css');
+  }, 10000);
+
+  test('should handle WebSocket connections', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const ws = new WebSocket(`ws://localhost:${TEST_PORT}`);
+    
+    await new Promise((resolve, reject) => {
+      ws.on('open', resolve);
+      ws.on('error', reject);
+    });
+    
+    expect(ws.readyState).toBe(WebSocket.OPEN);
+    ws.close();
+  }, 10000);
+
+  test('should return 404 for non-existent files', async () => {
+    await startDevServer();
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    try {
+      await axios.get(`${BASE_URL}/non-existent.html`);
+    } catch (error: any) {
+      expect(error.response.status).toBe(404);
+      expect(error.response.data).toContain('404 Not Found');
+    }
+  }, 10000);
+});

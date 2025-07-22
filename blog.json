@@ -6,22 +6,33 @@
   "basics": {
     "name": "Thomas aDavis"
   },
+  "settings": {
+    "postsPerPage": 2
+  },
   "posts": [
     {
       "title": "An Open Source Computer vision model to identify the Australian Aboriginal Flag [Tutorial]",
-      "source": "https://raw.githubusercontent.com/australia/aboriginal-flag-cv-model/master/README.md"
+      "source": "https://raw.githubusercontent.com/australia/aboriginal-flag-cv-model/master/README.md",
+      "tags": ["computer-vision", "open-source", "tutorial"],
+      "categories": ["AI/ML", "Tutorials"]
     },
     {
       "title": "Introducing JSON Blog",
-      "source": "https://gist.github.com/thomasdavis/db7db8d07ccb086504261802edf3069a/raw/introducing.md"
+      "source": "https://gist.github.com/thomasdavis/db7db8d07ccb086504261802edf3069a/raw/introducing.md",
+      "tags": ["json", "blog", "announcement"],
+      "categories": ["Announcements"]
     },
     {
       "title": "Organizing your application using Modules (require.js)",
-      "source": "https://raw.githubusercontent.com/thomasdavis/backbonetutorials/gh-pages/_posts/2011-10-10-organizing-backbone-using-modules.md"
+      "source": "https://raw.githubusercontent.com/thomasdavis/backbonetutorials/gh-pages/_posts/2011-10-10-organizing-backbone-using-modules.md",
+      "tags": ["javascript", "requirejs", "modules", "backbone"],
+      "categories": ["JavaScript", "Tutorials"]
     },
     {
       "title": "Markdown Example",
-      "source": "https://gist.githubusercontent.com/thomasdavis/03b712d36272c9e79535c583bf8e70b8/raw/1aa2f00e62ac85d1f51d0792facb1af8db4b6ef3/second.md"
+      "source": "https://gist.githubusercontent.com/thomasdavis/03b712d36272c9e79535c583bf8e70b8/raw/1aa2f00e62ac85d1f51d0792facb1af8db4b6ef3/second.md",
+      "tags": ["markdown", "example"],
+      "categories": ["Documentation"]
     }
   ],
   "pages": [

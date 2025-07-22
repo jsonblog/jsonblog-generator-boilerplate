@@ -1,7 +1,25 @@
 {{#> layout}}
   {{#*inline "content"}}
     <article>
-      <time datetime="{{post.createdAt}}">{{formatDate post.createdAt}}</time>
+      <header class="post-header">
+        <time datetime="{{post.createdAt}}">{{formatDate post.createdAt}}</time>
+        {{#if post.tags}}
+          <div class="post-tags">
+            <span class="tags-label">Tags:</span>
+            {{#each post.tags}}
+              <a href="/tag/{{slugify this}}.html" class="tag">{{this}}</a>
+            {{/each}}
+          </div>
+        {{/if}}
+        {{#if post.categories}}
+          <div class="post-categories">
+            <span class="categories-label">Categories:</span>
+            {{#each post.categories}}
+              <a href="/category/{{slugify this}}.html" class="category">{{this}}</a>
+            {{/each}}
+          </div>
+        {{/if}}
+      </header>
       {{{post.content}}}
     </article>
   {{/inline}}

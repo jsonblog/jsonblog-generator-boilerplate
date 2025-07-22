@@ -31,6 +31,8 @@ export interface BlogPost {
     updatedAt?: string;
     content?: string;
     slug?: string;
+    tags?: string[];
+    categories?: string[];
 }
 export interface BlogPage {
     title: string;
@@ -50,6 +52,9 @@ export interface Blog {
         canonical?: string;
         version?: string;
         lastModified?: string;
+    };
+    settings?: {
+        postsPerPage?: number;
     };
 }
 export interface GeneratedFile {

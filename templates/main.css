@@ -172,6 +172,103 @@ footer {
   font-size: 0.9rem;
 }
 
+/* Tags and Categories */
+.post-tags, .post-categories {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.post-tags .tag, .post-categories .category {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  margin-right: 0.5rem;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.post-tags .tag:hover, .post-categories .category:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.tags-label, .categories-label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.post-meta {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.post-meta time {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.post-description {
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.tag-count, .category-count {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.post-preview {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.post-preview:last-child {
+  border-bottom: none;
+}
+
+.breadcrumb {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+}
+
+.pagination-prev, .pagination-next {
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
+
+.pagination-prev:hover, .pagination-next:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 0.9rem;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   body {

@@ -2,11 +2,52 @@
   {{#*inline "content"}}
     {{#each posts}}
       <article class="post-card">
-        <h2><a href="{{this.slug}}.html">{{this.title}}</a></h2>
-        {{#if this.createdAt}}
-          <time datetime="{{this.createdAt}}">{{formatDate this.createdAt}}</time>
+        <h2><a href="/{{this.slug}}.html">{{this.title}}</a></h2>
+        {{#if this.description}}
+          <p class="post-description">{{this.description}}</p>
         {{/if}}
+        <div class="post-meta">
+          {{#if this.createdAt}}
+            <time datetime="{{this.createdAt}}">{{formatDate this.createdAt}}</time>
+          {{/if}}
+          {{#if this.tags}}
+            <div class="post-tags">
+              {{#each this.tags}}
+                <a href="/tag/{{slugify this}}.html" class="tag">{{this}}</a>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if this.categories}}
+            <div class="post-categories">
+              {{#each this.categories}}
+                <a href="/category/{{slugify this}}.html" class="category">{{this}}</a>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
       </article>
     {{/each}}
+    
+    {{#if pagination}}
+      {{#if (gt pagination.totalPages 1)}}
+        <nav class="pagination">
+          {{#if pagination.hasPrev}}
+            {{#if pagination.isFirstPage}}
+              <a href="/" class="pagination-prev">← Previous</a>
+            {{else}}
+              <a href="/page/{{pagination.prevPage}}.html" class="pagination-prev">← Previous</a>
+            {{/if}}
+          {{/if}}
+          
+          <span class="pagination-info">
+            Page {{pagination.currentPage}} of {{pagination.totalPages}}
+          </span>
+          
+          {{#if pagination.hasNext}}
+            <a href="/page/{{pagination.nextPage}}.html" class="pagination-next">Next →</a>
+          {{/if}}
+        </nav>
+      {{/if}}
+    {{/if}}
   {{/inline}}
 {{/layout}}

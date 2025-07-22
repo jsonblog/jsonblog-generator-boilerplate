@@ -11,13 +11,21 @@ A modern, customizable static blog generator that serves as a reference implemen
 
 ## Features
 
-- Clean, modern HTML output
-- Markdown support with code highlighting
-- Customizable templates using Handlebars
-- TypeScript support
-- Well-documented API
-- Extensive test coverage
-- Perfect starting point for your own generator
+- 🚀 **Development server** with live reload on port 3500
+- 🏷️ **Tags and categories** support for better content organization
+- 📄 **Pagination** with configurable posts per page
+- 📡 **RSS feed** generation for content syndication
+- 🗺️ **Sitemap** generation for SEO
+- ⚡ **Parallel processing** for fast content generation
+- 🔍 **Enhanced logging** with pino for better debugging
+- 🛡️ **Robust error handling** with graceful fallbacks
+- 📝 Clean, modern HTML output
+- 🎨 Markdown support with code highlighting
+- 🔧 Customizable templates using Handlebars
+- 📘 TypeScript support
+- 📚 Well-documented API
+- ✅ Extensive test coverage
+- 🎯 Perfect starting point for your own generator
 
 ## Installation
 
@@ -28,7 +36,7 @@ npm install jsonblog-generator-boilerplate
 ## Usage
 
 ```typescript
-import { generator } from 'jsonblog-generator-boilerplate';
+import generator from 'jsonblog-generator-boilerplate';
 
 const blog = {
   site: {
@@ -38,17 +46,94 @@ const blog = {
   basics: {
     name: 'John Doe',
   },
+  settings: {
+    postsPerPage: 5, // Optional: defaults to 10
+  },
   posts: [
     {
       title: 'Hello World',
       content: '# My First Post\n\nWelcome to my blog!',
       createdAt: '2025-02-25',
+      tags: ['introduction', 'welcome'],
+      categories: ['General'],
     },
   ],
 };
 
 const files = await generator(blog, './output');
 ```
+
+## New Features
+
+### Development Server
+
+Start a live development server to preview your blog:
+
+```bash
+npm run dev
+```
+
+This will:
+- Start a server on `http://localhost:3500`
+- Watch for changes in templates, source files, and blog.json
+- Automatically reload the browser when changes are detected
+
+### Tags and Categories
+
+Organize your content with tags and categories:
+
+```typescript
+{
+  title: 'My Post',
+  content: 'Post content...',
+  tags: ['javascript', 'tutorial'],
+  categories: ['Programming', 'Web Development']
+}
+```
+
+This will generate:
+- Individual tag pages at `/tag/[tag-name].html`
+- Category pages at `/category/[category-name].html`
+- Tag and category links on posts and index pages
+
+### Pagination
+
+Control how many posts appear per page:
+
+```typescript
+{
+  settings: {
+    postsPerPage: 5 // defaults to 10
+  }
+}
+```
+
+Pagination pages are generated at:
+- `/index.html` (first page)
+- `/page/2.html`, `/page/3.html`, etc.
+
+### RSS Feed
+
+An RSS feed is automatically generated at `/rss.xml` with:
+- The 20 most recent posts
+- Full post metadata
+- Proper content encoding
+
+### Sitemap
+
+A sitemap is automatically generated at `/sitemap.xml` including:
+- All posts and pages
+- Tag and category pages
+- Proper priority and change frequency settings
+
+### Enhanced Error Handling
+
+The generator now includes:
+- Comprehensive input validation
+- Graceful handling of missing content
+- Network timeouts for remote content
+- File size limits (10MB)
+- Detailed error logging with pino
 
 ## Development
 
@@ -77,6 +162,8 @@ npm test
 ### Available Scripts
 
 - `npm run build` - Build the TypeScript code
+- `npm run dev` - Start development server with live reload on port 3500
+- `npm run watch` - Watch TypeScript files for changes
 - `npm test` - Run tests
 - `npm run lint` - Run ESLint
 - `npm run format` - Format code with Prettier

@@ -28,14 +28,17 @@ describe('JsonBlog Generator', () => {
   it('should generate expected files', async () => {
     const files: GeneratedFile[] = await generator(mockBlog, '/test/path');
 
-    // Should generate index.html, post page, about page, and CSS
-    expect(files).toHaveLength(4);
+    // Should generate index.html, post page, about page, pagination, RSS, sitemap, and CSS
+    expect(files.length).toBeGreaterThan(4);
 
     // Check for required files
     expect(files.find((f: GeneratedFile) => f.name === 'index.html')).toBeTruthy();
     expect(files.find((f: GeneratedFile) => f.name === 'test-post.html')).toBeTruthy();
     expect(files.find((f: GeneratedFile) => f.name === 'about.html')).toBeTruthy();
     expect(files.find((f: GeneratedFile) => f.name === 'main.css')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'rss.xml')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'sitemap.xml')).toBeTruthy();
+    expect(files.find((f: GeneratedFile) => f.name === 'page/1.html')).toBeTruthy();
   });
 
   it('should handle markdown content', async () => {
